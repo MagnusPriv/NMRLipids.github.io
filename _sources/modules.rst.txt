@@ -8,6 +8,14 @@ DatabankLib
 
 Main project package. Contains most of project's logic and API.
 
+.. toctree::
+   :maxdepth: 1
+
+   OrderParameter
+
+
+
+
 AnalyzeDatabank
 ---------------
 
