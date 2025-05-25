@@ -2,8 +2,6 @@
 
 Scripts.DatabankLib.settings
 ============================
-
-Hello this is success, rest up, double
 Submodules
 ----------
 
@@ -14,7 +12,7 @@ Submodules
    Scripts.DatabankLib.settings.engines
    Scripts.DatabankLib.settings.molecules
 
-Module contentsssssssssss
+Module contents
 ---------------
 
 .. automodule:: Scripts.DatabankLib.settings

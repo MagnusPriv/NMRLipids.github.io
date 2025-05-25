@@ -2,8 +2,6 @@
 
 Scripts.DatabankLib
 ===================
-
-Hello this is success, rest up, double
 Subpackages
 -----------
 
@@ -32,7 +30,7 @@ Submodules
    Scripts.DatabankLib.quality
    Scripts.DatabankLib.utils
 
-Module contentsssssssssss
+Module contents
 ---------------
 
 .. automodule:: Scripts.DatabankLib

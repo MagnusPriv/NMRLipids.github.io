@@ -4,8 +4,6 @@ Scripts.BuildDocs.source
 ========================
 .. py:module:: Scripts.BuildDocs.source
 
-
-Hello this is success, rest up, double
 Submodules
 ----------
 

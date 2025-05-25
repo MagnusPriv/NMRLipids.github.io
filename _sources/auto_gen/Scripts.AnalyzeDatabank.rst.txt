@@ -4,8 +4,6 @@ Scripts.AnalyzeDatabank
 =======================
 .. py:module:: Scripts.AnalyzeDatabank
 
-
-Hello this is success, rest up, double
 Submodules
 ----------
 
