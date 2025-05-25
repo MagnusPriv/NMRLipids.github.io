@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Scripts.DatabankLib package &mdash; NMRlipids databank 4.9.2023 documentation</title>
+  <title>Scripts.DatabankLib &mdash; NMRlipids databank 4.9.2023 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
@@ -19,7 +19,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Scripts.DatabankLib.settings package" href="Scripts.DatabankLib.settings.html" />
+    <link rel="next" title="Scripts.DatabankLib.settings" href="Scripts.DatabankLib.settings.html" />
     <link rel="prev" title="Scripts.BuildDatabank.searchDATABANK module" href="Scripts.BuildDatabank.searchDATABANK.html" /> 
 </head>
 
@@ -54,19 +54,36 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Structure</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="Scripts.html">Scripts namespace</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="Scripts.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="Scripts.AnalyzeDatabank.html">Scripts.AnalyzeDatabank namespace</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Scripts.BuildDatabank.html">Scripts.BuildDatabank namespace</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Scripts.DatabankLib package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-Scripts.DatabankLib">Module contents</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Scripts.html">Scripts</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Scripts.AnalyzeDatabank.html">Scripts.AnalyzeDatabank</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Scripts.BuildDatabank.html">Scripts.BuildDatabank</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Scripts.DatabankLib</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Scripts.DatabankLib.settings.html">Scripts.DatabankLib.settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Scripts.DatabankLib.analyze.html">Scripts.DatabankLib.analyze module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Scripts.DatabankLib.analyze_nmrpca.html">Scripts.DatabankLib.analyze_nmrpca module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Scripts.DatabankLib.core.html">Scripts.DatabankLib.core module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Scripts.DatabankLib.databankLibrary.html">Scripts.DatabankLib.databankLibrary module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Scripts.DatabankLib.databankio.html">Scripts.DatabankLib.databankio module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Scripts.DatabankLib.databankop.html">Scripts.DatabankLib.databankop module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Scripts.DatabankLib.form_factor.html">Scripts.DatabankLib.form_factor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Scripts.DatabankLib.jpyroutines.html">Scripts.DatabankLib.jpyroutines module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Scripts.DatabankLib.jsonEncoders.html">Scripts.DatabankLib.jsonEncoders module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Scripts.DatabankLib.openmm_parser.html">Scripts.DatabankLib.openmm_parser module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Scripts.DatabankLib.plottings.html">Scripts.DatabankLib.plottings module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Scripts.DatabankLib.quality.html">Scripts.DatabankLib.quality module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Scripts.DatabankLib.utils.html">Scripts.DatabankLib.utils module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="Scripts.updateGUI.html">Scripts.updateGUI namespace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-contentsssssssssss">Module contentsssssssssss</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Scripts.DatabankLib.RCODE_SKIPPED"><code class="docutils literal notranslate"><span class="pre">RCODE_SKIPPED</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Scripts.DatabankLib.RCODE_COMPUTED"><code class="docutils literal notranslate"><span class="pre">RCODE_COMPUTED</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Scripts.DatabankLib.RCODE_ERROR"><code class="docutils literal notranslate"><span class="pre">RCODE_ERROR</span></code></a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Scripts.updateGUI.html">Scripts.updateGUI</a></li>
 </ul>
 </li>
 </ul>
@@ -85,8 +102,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="Scripts.html">Scripts namespace</a></li>
-      <li class="breadcrumb-item active">Scripts.DatabankLib package</li>
+          <li class="breadcrumb-item"><a href="Scripts.html">Scripts</a></li>
+      <li class="breadcrumb-item active">Scripts.DatabankLib</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/auto_gen/Scripts.DatabankLib.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -96,16 +113,16 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="scripts-databanklib-package">
-<h1>Scripts.DatabankLib package<a class="headerlink" href="#scripts-databanklib-package" title="Link to this heading"></a></h1>
-<section id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+  <section id="scripts-databanklib">
+<h1>Scripts.DatabankLib<a class="headerlink" href="#scripts-databanklib" title="Link to this heading"></a></h1>
+<p>Hello this is success, rest up, double
+Subpackages
+———–</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Scripts.DatabankLib.settings.html">Scripts.DatabankLib.settings package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Scripts.DatabankLib.settings.html">Scripts.DatabankLib.settings</a></li>
 </ul>
 </div>
-</section>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
@@ -126,9 +143,9 @@
 </ul>
 </div>
 </section>
-<section id="module-Scripts.DatabankLib">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-Scripts.DatabankLib" title="Link to this heading"></a></h2>
-<p>For now we just need to declare this folder to be package.
+<section id="module-contentsssssssssss">
+<h2>Module contentsssssssssss<a class="headerlink" href="#module-contentsssssssssss" title="Link to this heading"></a></h2>
+<p id="module-Scripts.DatabankLib">For now we just need to declare this folder to be package.
 TODO: organize proper package structure</p>
 <dl class="py data">
 <dt class="sig sig-object py" id="Scripts.DatabankLib.RCODE_SKIPPED">
@@ -171,7 +188,7 @@ TODO: organize proper package structure</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="Scripts.BuildDatabank.searchDATABANK.html" class="btn btn-neutral float-left" title="Scripts.BuildDatabank.searchDATABANK module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="Scripts.DatabankLib.settings.html" class="btn btn-neutral float-right" title="Scripts.DatabankLib.settings package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Scripts.DatabankLib.settings.html" class="btn btn-neutral float-right" title="Scripts.DatabankLib.settings" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

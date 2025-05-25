@@ -1,8 +1,11 @@
-Scripts.BuildDocs.source namespace
-==================================
 
+
+Scripts.BuildDocs.source
+========================
 .. py:module:: Scripts.BuildDocs.source
 
+
+Hello this is success, rest up, double
 Submodules
 ----------
 
@@ -10,3 +13,4 @@ Submodules
    :maxdepth: 1
 
    Scripts.BuildDocs.source.conf
+   Scripts.BuildDocs.source.run_apidoc

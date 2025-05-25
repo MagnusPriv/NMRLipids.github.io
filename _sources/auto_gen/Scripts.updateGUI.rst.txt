@@ -1,8 +1,11 @@
-Scripts.updateGUI namespace
-===========================
 
+
+Scripts.updateGUI
+=================
 .. py:module:: Scripts.updateGUI
 
+
+Hello this is success, rest up, double
 Submodules
 ----------
 
