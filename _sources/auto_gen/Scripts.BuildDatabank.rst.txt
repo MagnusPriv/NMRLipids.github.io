@@ -1,0 +1,19 @@
+Scripts.BuildDatabank namespace
+===============================
+
+.. py:module:: Scripts.BuildDatabank
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   Scripts.BuildDatabank.AddData
+   Scripts.BuildDatabank.QualityEvaluation
+   Scripts.BuildDatabank.buildH_calcOP_test
+   Scripts.BuildDatabank.check_bonds
+   Scripts.BuildDatabank.check_densities
+   Scripts.BuildDatabank.check_mappings
+   Scripts.BuildDatabank.makeRanking
+   Scripts.BuildDatabank.searchDATABANK

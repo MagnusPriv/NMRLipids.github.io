@@ -1,0 +1,13 @@
+Scripts.updateGUI namespace
+===========================
+
+.. py:module:: Scripts.updateGUI
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   Scripts.updateGUI.GUI_DB_Update
+   Scripts.updateGUI.createPDBs

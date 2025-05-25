@@ -1,0 +1,45 @@
+DatabankLib.settings package
+============================
+
+Submodules
+----------
+
+DatabankLib.settings.dic\_lipids\_UA module
+-------------------------------------------
+
+.. automodule:: DatabankLib.settings.dic_lipids_UA
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+DatabankLib.settings.engines module
+-----------------------------------
+
+.. automodule:: DatabankLib.settings.engines
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+DatabankLib.settings.molecules module
+-------------------------------------
+
+.. automodule:: DatabankLib.settings.molecules
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+DatabankLib.settings.test module
+--------------------------------
+
+.. automodule:: DatabankLib.settings.test
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Module contents
+---------------
+
+.. automodule:: DatabankLib.settings
+   :members:
+   :show-inheritance:
+   :undoc-members:

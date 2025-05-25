@@ -1,0 +1,12 @@
+Scripts.BuildDocs.source namespace
+==================================
+
+.. py:module:: Scripts.BuildDocs.source
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   Scripts.BuildDocs.source.conf

@@ -1,0 +1,16 @@
+Scripts namespace
+=================
+
+.. py:module:: Scripts
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 1
+
+   Scripts.AnalyzeDatabank
+   Scripts.BuildDatabank
+   Scripts.DatabankLib
+   Scripts.tests
+   Scripts.updateGUI
