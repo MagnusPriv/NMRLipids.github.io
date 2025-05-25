@@ -1,0 +1,17 @@
+
+
+Scripts.tests
+=============
+.. py:module:: Scripts.tests
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   Scripts.tests.test2_api
+   Scripts.tests.test_AddData
+   Scripts.tests.test_analyze
+   Scripts.tests.test_loads
+   Scripts.tests.test_recompute_api

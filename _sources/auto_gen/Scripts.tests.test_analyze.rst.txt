@@ -1,0 +1,7 @@
+Scripts.tests.test\_analyze module
+==================================
+
+.. automodule:: Scripts.tests.test_analyze
+   :members:
+   :show-inheritance:
+   :undoc-members:

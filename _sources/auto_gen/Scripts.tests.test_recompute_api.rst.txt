@@ -1,0 +1,7 @@
+Scripts.tests.test\_recompute\_api module
+=========================================
+
+.. automodule:: Scripts.tests.test_recompute_api
+   :members:
+   :show-inheritance:
+   :undoc-members:

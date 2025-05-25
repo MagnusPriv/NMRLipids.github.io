@@ -1,0 +1,7 @@
+Scripts.tests.test\_loads module
+================================
+
+.. automodule:: Scripts.tests.test_loads
+   :members:
+   :show-inheritance:
+   :undoc-members:

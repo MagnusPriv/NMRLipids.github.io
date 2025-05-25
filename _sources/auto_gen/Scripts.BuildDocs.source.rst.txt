@@ -11,4 +11,3 @@ Submodules
    :maxdepth: 1
 
    Scripts.BuildDocs.source.conf
-   Scripts.BuildDocs.source.run_apidoc

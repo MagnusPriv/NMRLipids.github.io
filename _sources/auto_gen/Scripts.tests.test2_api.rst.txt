@@ -1,0 +1,7 @@
+Scripts.tests.test2\_api module
+===============================
+
+.. automodule:: Scripts.tests.test2_api
+   :members:
+   :show-inheritance:
+   :undoc-members:
