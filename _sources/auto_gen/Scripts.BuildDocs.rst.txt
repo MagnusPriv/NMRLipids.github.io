@@ -4,7 +4,7 @@ Scripts.BuildDocs
 =================
 .. py:module:: Scripts.BuildDocs
 
-Subpackages
+Subfolders
 -----------
 
 .. toctree::

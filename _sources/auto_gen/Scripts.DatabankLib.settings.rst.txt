@@ -2,7 +2,7 @@
 
 Scripts.DatabankLib.settings
 ============================
-Submodules
+Python files
 ----------
 
 .. toctree::

@@ -4,7 +4,7 @@ Scripts
 =======
 .. py:module:: Scripts
 
-Subpackages
+Subfolders
 -----------
 
 .. toctree::

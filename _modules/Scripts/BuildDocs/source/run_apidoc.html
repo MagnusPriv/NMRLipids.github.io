@@ -83,7 +83,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
 
-<span class="c1"># Script to regenerate Sphinx API stubs with custom template</span>
+
 
 <div class="viewcode-block" id="main">
 <a class="viewcode-back" href="../../../../auto_gen/Scripts.BuildDocs.source.run_apidoc.html#Scripts.BuildDocs.source.run_apidoc.main">[docs]</a>
@@ -95,16 +95,17 @@
     <span class="n">scripts_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">repo_root</span><span class="p">,</span> <span class="s1">&#39;Scripts&#39;</span><span class="p">),</span> <span class="n">source_dir</span><span class="p">)</span>
     <span class="n">auto_dir</span> <span class="o">=</span> <span class="s1">&#39;auto_gen&#39;</span>
     <span class="n">template_dir</span> <span class="o">=</span> <span class="s1">&#39;_templates/apidoc&#39;</span>
+    <span class="n">excluded_patterns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;*tests*&#39;</span><span class="p">,</span><span class="s1">&#39;*init*&#39;</span><span class="p">]</span>
+
 
     <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s1">&#39;sphinx-apidoc&#39;</span><span class="p">,</span>      <span class="c1"># standalone CLIs</span>
-        <span class="s1">&#39;-f&#39;</span><span class="p">,</span>                 <span class="c1"># force overwrite existing stubs</span>
         <span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="n">auto_dir</span><span class="p">,</span>       <span class="c1"># relative output directory</span>
         <span class="s1">&#39;--separate&#39;</span><span class="p">,</span>         <span class="c1"># separate .rst per module</span>
         <span class="s1">&#39;--implicit-namespaces&#39;</span><span class="p">,</span>  <span class="c1"># support namespace packages</span>
         <span class="s1">&#39;-d&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span>            <span class="c1"># max depth = 1</span>
         <span class="s1">&#39;--templatedir&#39;</span><span class="p">,</span> <span class="n">template_dir</span><span class="p">,</span>  <span class="c1"># relative template directory</span>
-        <span class="n">scripts_dir</span>           <span class="c1"># relative module path to crawl</span>
+        <span class="n">scripts_dir</span><span class="p">,</span> <span class="o">*</span><span class="n">excluded_patterns</span>           <span class="c1"># relative module path to crawl</span>
     <span class="p">]</span>
 
     <span class="c1"># Display info and execute within source_dir</span>
@@ -119,6 +120,9 @@
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">returncode</span><span class="p">)</span></div>
 
 
+
+
+
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
 </pre></div>
@@ -130,7 +134,21 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025,OSI Approved: GNU General Public License v3 (GPLv3).</p>
+    <p>&#169; Copyright 2025,NMRlipids open collaboration 
+
+    OSI Approved: GNU General Public License v3 (GPLv3)
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see https://www.gnu.org/licenses/.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

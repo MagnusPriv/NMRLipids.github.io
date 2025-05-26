@@ -2,7 +2,7 @@
 
 Scripts.DatabankLib
 ===================
-Subpackages
+Subfolders
 -----------
 
 .. toctree::
@@ -10,7 +10,7 @@ Subpackages
 
    Scripts.DatabankLib.settings
 
-Submodules
+Python files
 ----------
 
 .. toctree::

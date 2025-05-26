@@ -4,10 +4,11 @@ Scripts.BuildDocs.source
 ========================
 .. py:module:: Scripts.BuildDocs.source
 
-Submodules
+Python files
 ----------
 
 .. toctree::
    :maxdepth: 1
 
    Scripts.BuildDocs.source.conf
+   Scripts.BuildDocs.source.run_apidoc
