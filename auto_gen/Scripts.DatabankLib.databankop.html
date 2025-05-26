@@ -62,10 +62,9 @@
 <li class="toctree-l3 current"><a class="reference internal" href="Scripts.DatabankLib.html">Scripts.DatabankLib</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="Scripts.DatabankLib.html#subpackages">Subpackages</a></li>
 <li class="toctree-l4 current"><a class="reference internal" href="Scripts.DatabankLib.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="Scripts.DatabankLib.html#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Scripts.DatabankLib.html#module-Scripts.DatabankLib">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="Scripts.tests.html">Scripts.tests</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Scripts.updateGUI.html">Scripts.updateGUI</a></li>
 </ul>
 </li>
@@ -99,8 +98,65 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="scripts-databanklib-databankop-module">
-<h1>Scripts.DatabankLib.databankop module<a class="headerlink" href="#scripts-databanklib-databankop-module" title="Link to this heading"></a></h1>
+  <section id="module-Scripts.DatabankLib.databankop">
+<span id="scripts-databanklib-databankop-module"></span><h1>Scripts.DatabankLib.databankop module<a class="headerlink" href="#module-Scripts.DatabankLib.databankop" title="Link to this heading"></a></h1>
+<blockquote>
+<div><blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">meta private<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</div></blockquote>
+<p>calculation of order parameters of lipid bilayers
+from a MD trajectory</p>
+<p>Made by Joe,  Last edit 2017/02/02</p>
+</div></blockquote>
+<blockquote>
+<div><p>output: order parameters (2 textfiles)</p>
+</div></blockquote>
+<hr class="docutils" />
+<dl class="py function">
+<dt class="sig sig-object py" id="Scripts.DatabankLib.databankop.parse_op_input">
+<span class="sig-prename descclassname"><span class="pre">Scripts.DatabankLib.databankop.</span></span><span class="sig-name descname"><span class="pre">parse_op_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lipid_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Scripts/DatabankLib/databankop.html#parse_op_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Scripts.DatabankLib.databankop.parse_op_input" title="Link to this definition"></a></dt>
+<dd><p>Form pair-list of all OPs which should be calculated</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mapping_file</strong> (<em>str</em>) – mapping file name</p></li>
+<li><p><strong>lipid_name</strong> (<em>str</em>) – lipid name (residue name)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of OrderParameter instances</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="Scripts.DatabankLib.databankop.find_OP">
+<span class="sig-prename descclassname"><span class="pre">Scripts.DatabankLib.databankop.</span></span><span class="sig-name descname"><span class="pre">find_OP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inp_fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">traj_fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lipid_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/Scripts/DatabankLib/databankop.html#find_OP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#Scripts.DatabankLib.databankop.find_OP" title="Link to this definition"></a></dt>
+<dd><p>Externally used funcion for computing OP values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inp_fname</strong> (<em>_type_</em>) – mapping file</p></li>
+<li><p><strong>top_fname</strong> (<em>_type_</em>) – TPR file</p></li>
+<li><p><strong>traj_fname</strong> (<em>_type_</em>) – TRAJ file</p></li>
+<li><p><strong>lipid_name</strong> (<em>_type_</em>) – lipid name (residue name)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of OrderParameter instances</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ordPars</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -114,7 +170,19 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Samuli Ollila.</p>
+    <p>&#169; Copyright 2025,OSI Approved: GNU General Public License v3 (GPLv3)
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;..</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
