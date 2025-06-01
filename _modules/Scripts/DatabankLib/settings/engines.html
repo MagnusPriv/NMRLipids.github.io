@@ -110,6 +110,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">DatabankLib.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">System</span>
+
 <span class="c1"># GROMACS</span>
 <span class="n">gromacs_dict</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;INI&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -582,15 +584,15 @@
 <div class="viewcode-block" id="get_struc_top_traj_fnames">
 <a class="viewcode-back" href="../../../../auto_gen/Scripts.DatabankLib.settings.engines.html#Scripts.DatabankLib.settings.engines.get_struc_top_traj_fnames">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_struc_top_traj_fnames</span><span class="p">(</span>
-        <span class="n">system</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">allowStructure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">joinPath</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+        <span class="n">system</span><span class="p">:</span> <span class="n">System</span><span class="p">,</span> <span class="n">allow_structure</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">join_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns filenames of structure/topology/trajectory according to system&#39;s engine.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        system (dict): Databank System</span>
-<span class="sd">        allowStructure (bool, optional): Allow using structure instead of topology for</span>
+<span class="sd">        allow_structure (bool, optional): Allow using structure instead of topology for</span>
 <span class="sd">            further MDAnalysis&#39; Universe initialization. Defaults to False.</span>
-<span class="sd">        joinPath (str,None): path to be joined with filenames</span>
+<span class="sd">        join_path (str,None): path to be joined with filenames</span>
 
 <span class="sd">    Returns ((string, string, string)): structure filename, topology filename,</span>
 <span class="sd">            trajectory filename</span>
@@ -599,24 +601,24 @@
 <span class="sd">        ValueError: function</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">sft</span> <span class="o">=</span> <span class="n">system</span><span class="p">[</span><span class="s2">&quot;SOFTWARE&quot;</span><span class="p">]</span>
-    <span class="n">sftSpec</span> <span class="o">=</span> <span class="n">software_dict</span><span class="p">[</span><span class="n">sft</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span>
-    <span class="n">trjF</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sftSpec</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">sft_spec</span> <span class="o">=</span> <span class="n">software_dict</span><span class="p">[</span><span class="n">sft</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span>
+    <span class="n">trj_fn</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sft_spec</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;CATEGORY&quot;</span> <span class="ow">in</span> <span class="n">v</span> <span class="ow">and</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;CATEGORY&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;trajectory&quot;</span> <span class="ow">and</span>
                 <span class="n">k</span> <span class="ow">in</span> <span class="n">system</span> <span class="ow">and</span> <span class="n">system</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="n">trjF</span> <span class="o">=</span> <span class="n">system</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">trj_fn</span> <span class="o">=</span> <span class="n">system</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
             <span class="k">break</span>
-    <span class="n">topF</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sftSpec</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">top_fn</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sft_spec</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;CATEGORY&quot;</span> <span class="ow">in</span> <span class="n">v</span> <span class="ow">and</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;CATEGORY&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;topology&quot;</span> <span class="ow">and</span>
                 <span class="n">k</span> <span class="ow">in</span> <span class="n">system</span> <span class="ow">and</span> <span class="n">system</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="n">topF</span> <span class="o">=</span> <span class="n">system</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">top_fn</span> <span class="o">=</span> <span class="n">system</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
             <span class="k">break</span>
-    <span class="n">strF</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sftSpec</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">struc_fn</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sft_spec</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;CATEGORY&quot;</span> <span class="ow">in</span> <span class="n">v</span> <span class="ow">and</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;CATEGORY&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;structure&quot;</span>
                 <span class="ow">and</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">system</span> <span class="ow">and</span> <span class="n">system</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="n">strF</span> <span class="o">=</span> <span class="n">system</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">struc_fn</span> <span class="o">=</span> <span class="n">system</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
             <span class="k">break</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">is_sequence</span><span class="p">(</span><span class="n">var</span><span class="p">):</span>
@@ -624,31 +626,31 @@
 
     <span class="c1"># taking first elements</span>
     <span class="c1"># TODO can it be removed?</span>
-    <span class="k">if</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">topF</span><span class="p">):</span>
-        <span class="n">topF</span> <span class="o">=</span> <span class="n">topF</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">topF</span><span class="p">):</span>
-            <span class="n">topF</span> <span class="o">=</span> <span class="n">topF</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">top_fn</span><span class="p">):</span>
+        <span class="n">top_fn</span> <span class="o">=</span> <span class="n">top_fn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">top_fn</span><span class="p">):</span>
+            <span class="n">top_fn</span> <span class="o">=</span> <span class="n">top_fn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="k">if</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">trjF</span><span class="p">):</span>
-        <span class="n">trjF</span> <span class="o">=</span> <span class="n">trjF</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">trjF</span><span class="p">):</span>
-            <span class="n">trjF</span> <span class="o">=</span> <span class="n">trjF</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">trj_fn</span><span class="p">):</span>
+        <span class="n">trj_fn</span> <span class="o">=</span> <span class="n">trj_fn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">trj_fn</span><span class="p">):</span>
+            <span class="n">trj_fn</span> <span class="o">=</span> <span class="n">trj_fn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="k">if</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">strF</span><span class="p">):</span>
-        <span class="n">strF</span> <span class="o">=</span> <span class="n">strF</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">strF</span><span class="p">):</span>
-            <span class="n">strF</span> <span class="o">=</span> <span class="n">strF</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">struc_fn</span><span class="p">):</span>
+        <span class="n">struc_fn</span> <span class="o">=</span> <span class="n">struc_fn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">is_sequence</span><span class="p">(</span><span class="n">struc_fn</span><span class="p">):</span>
+            <span class="n">struc_fn</span> <span class="o">=</span> <span class="n">struc_fn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="c1"># applying joinPath</span>
-    <span class="k">if</span> <span class="n">joinPath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">topF</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">topF</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">joinPath</span><span class="p">,</span> <span class="n">topF</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">trjF</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">trjF</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">joinPath</span><span class="p">,</span> <span class="n">trjF</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">strF</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">strF</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">joinPath</span><span class="p">,</span> <span class="n">strF</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">join_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">top_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">top_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">join_path</span><span class="p">,</span> <span class="n">top_fn</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">trj_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">trj_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">join_path</span><span class="p">,</span> <span class="n">trj_fn</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">struc_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">struc_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">join_path</span><span class="p">,</span> <span class="n">struc_fn</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">strF</span><span class="p">,</span> <span class="n">topF</span><span class="p">,</span> <span class="n">trjF</span></div>
+    <span class="k">return</span> <span class="n">struc_fn</span><span class="p">,</span> <span class="n">top_fn</span><span class="p">,</span> <span class="n">trj_fn</span></div>
 
 </pre></div>
 

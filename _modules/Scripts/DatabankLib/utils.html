@@ -97,7 +97,7 @@
 <span class="sd">        logger (Logger): reference to Logger initialized by the top script</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">systems</span> <span class="o">=</span> <span class="n">initialize_databank</span><span class="p">()</span>
-    <span class="n">resDict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">result_dict</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">RCODE_COMPUTED</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">RCODE_SKIPPED</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">RCODE_ERROR</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
@@ -106,12 +106,12 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;System title: &quot;</span> <span class="o">+</span> <span class="n">system</span><span class="p">[</span><span class="s1">&#39;SYSTEM&#39;</span><span class="p">])</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;System path: &quot;</span> <span class="o">+</span> <span class="n">system</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">])</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">method</span><span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
-        <span class="n">resDict</span><span class="p">[</span><span class="n">res</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">result_dict</span><span class="p">[</span><span class="n">res</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">    COMPUTED: </span><span class="si">{</span><span class="n">resDict</span><span class="p">[</span><span class="n">RCODE_COMPUTED</span><span class="p">]</span><span class="si">}</span>
-<span class="s2">    SKIPPED: </span><span class="si">{</span><span class="n">resDict</span><span class="p">[</span><span class="n">RCODE_SKIPPED</span><span class="p">]</span><span class="si">}</span>
-<span class="s2">    ERROR: </span><span class="si">{</span><span class="n">resDict</span><span class="p">[</span><span class="n">RCODE_ERROR</span><span class="p">]</span><span class="si">}</span>
+<span class="s2">    COMPUTED: </span><span class="si">{</span><span class="n">result_dict</span><span class="p">[</span><span class="n">RCODE_COMPUTED</span><span class="p">]</span><span class="si">}</span>
+<span class="s2">    SKIPPED: </span><span class="si">{</span><span class="n">result_dict</span><span class="p">[</span><span class="n">RCODE_SKIPPED</span><span class="p">]</span><span class="si">}</span>
+<span class="s2">    ERROR: </span><span class="si">{</span><span class="n">result_dict</span><span class="p">[</span><span class="n">RCODE_ERROR</span><span class="p">]</span><span class="si">}</span>
 <span class="s2">    &quot;&quot;&quot;</span><span class="p">)</span></div>
 
 </pre></div>

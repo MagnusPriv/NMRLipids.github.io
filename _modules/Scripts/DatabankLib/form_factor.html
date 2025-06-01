@@ -98,9 +98,10 @@
 <span class="c1"># the universal mapping file</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">periodictable</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">DatabankLib.databankLibrary</span><span class="w"> </span><span class="kn">import</span> <span class="n">lipids_dict</span><span class="p">,</span> <span class="n">loadMappingFile</span><span class="p">,</span> <span class="n">getLipids</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">DatabankLib.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">System</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">DatabankLib.databankLibrary</span><span class="w"> </span><span class="kn">import</span> <span class="n">lipids_set</span><span class="p">,</span> <span class="n">getLipids</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">DatabankLib.jsonEncoders</span><span class="w"> </span><span class="kn">import</span> <span class="n">CompactJSONEncoder</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">DatabankLib</span><span class="w"> </span><span class="kn">import</span> <span class="n">NMLDB_ROOT_PATH</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">DatabankLib</span><span class="w"> </span><span class="kn">import</span> <span class="n">NMLDB_SIMU_PATH</span><span class="p">,</span> <span class="n">NMLDB_DATA_PATH</span>
 
 
 <span class="c1"># To write data in numpy arrays into json file, we inherit compact JSON</span>
@@ -138,7 +139,7 @@
     <span class="c1"># Group of static private helper methods</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">__listNamePairs</span><span class="p">(</span><span class="n">mapping_dict</span><span class="p">,</span> <span class="n">molecule</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__list_name_pairs</span><span class="p">(</span><span class="n">mapping_dict</span><span class="p">,</span> <span class="n">molecule</span><span class="p">):</span>
         <span class="n">pairs_dictionary</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">residues</span> <span class="o">=</span> <span class="p">[</span><span class="n">mv</span><span class="p">[</span><span class="s1">&#39;RESIDUE&#39;</span><span class="p">]</span>
                     <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">mv</span> <span class="ow">in</span> <span class="n">mapping_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
@@ -161,22 +162,23 @@
         <span class="k">return</span> <span class="n">pairs_dictionary</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">__filterHbonds</span><span class="p">(</span><span class="n">mapping_names</span><span class="p">):</span>
-        <span class="n">re_H</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;M_([A-Z]{1,2}[0-9]{1,4})*H[0-4]{1,2}_M&#39;</span><span class="p">)</span>
-        <span class="n">filtered</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="n">re_H</span><span class="o">.</span><span class="n">match</span><span class="p">,</span> <span class="n">mapping_names</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__filter_hbonds</span><span class="p">(</span><span class="n">mapping_names</span><span class="p">):</span>
+        <span class="n">re_h</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;M_([A-Z]{1,2}[0-9]{1,4})*H[0-4]{1,2}_M&#39;</span><span class="p">)</span>
+        <span class="n">filtered</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="n">re_h</span><span class="o">.</span><span class="n">match</span><span class="p">,</span> <span class="n">mapping_names</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">filtered</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">__getWater</span><span class="p">(</span><span class="n">rmf</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__get_water</span><span class="p">(</span><span class="n">rmf</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;resname &#39;</span> <span class="o">+</span> <span class="n">rmf</span><span class="p">[</span><span class="s1">&#39;COMPOSITION&#39;</span><span class="p">][</span><span class="s1">&#39;SOL&#39;</span><span class="p">][</span><span class="s1">&#39;NAME&#39;</span><span class="p">])</span>
 
     <span class="c1"># -- regular methods --</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">conf</span><span class="p">,</span> <span class="n">traj</span><span class="p">,</span> <span class="n">nbin</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">readme</span><span class="p">,</span> <span class="n">density_type</span><span class="o">=</span><span class="s2">&quot;electron&quot;</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf</span><span class="p">,</span> <span class="n">traj</span><span class="p">,</span> <span class="n">nbin</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span>
+                 <span class="n">system</span><span class="p">:</span> <span class="n">System</span><span class="p">,</span> <span class="n">density_type</span><span class="o">=</span><span class="s2">&quot;electron&quot;</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conf</span> <span class="o">=</span> <span class="n">conf</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">traj</span> <span class="o">=</span> <span class="n">traj</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">readme</span> <span class="o">=</span> <span class="n">readme</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">system</span> <span class="o">=</span> <span class="n">system</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">NMLDB_SIMU_PATH</span><span class="p">,</span> <span class="n">system</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">])</span>
         <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">u</span> <span class="o">=</span> <span class="n">mda</span><span class="o">.</span><span class="n">Universe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">traj</span><span class="p">)</span>
@@ -185,7 +187,7 @@
             <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;gro&#39;</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="n">e</span>
             <span class="c1"># assume conf was TPR</span>
-            <span class="n">gro</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;conf.gro&#39;</span>
+            <span class="n">gro</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__path</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;conf.gro&#39;</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generating conf.gro because MDAnalysis cannot read tpr version&quot;</span><span class="p">)</span>
             <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;echo System | gmx trjconv &quot;</span>
                       <span class="sa">f</span><span class="s2">&quot;-s </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="si">}</span><span class="s2"> -f </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">traj</span><span class="si">}</span><span class="s2"> -dump 0 -o </span><span class="si">{</span><span class="n">gro</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -199,37 +201,19 @@
         <span class="c1"># the totatl box size in [nm] - will be probably removed and tpr box size or</span>
         <span class="c1"># transform of final FF will be used instead</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="n">output</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lipids</span> <span class="o">=</span> <span class="n">getLipids</span><span class="p">(</span><span class="n">readme</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">waters</span> <span class="o">=</span> <span class="n">FormFactor</span><span class="o">.</span><span class="n">__getWater</span><span class="p">(</span><span class="n">readme</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__path</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lipids</span> <span class="o">=</span> <span class="n">getLipids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">waters</span> <span class="o">=</span> <span class="n">FormFactor</span><span class="o">.</span><span class="n">__get_water</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">density_type</span> <span class="o">=</span> <span class="n">density_type</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">system_mapping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">temporary_mapping_dictionary</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">calculate_weight</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">calculate_density</span><span class="p">()</span>
 
-<div class="viewcode-block" id="FormFactor.temporary_mapping_dictionary">
-<a class="viewcode-back" href="../../../auto_gen/Scripts.DatabankLib.form_factor.html#Scripts.DatabankLib.form_factor.FormFactor.temporary_mapping_dictionary">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">temporary_mapping_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">mapping_dictionary</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">key1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">readme</span><span class="p">[</span><span class="s2">&quot;COMPOSITION&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>  <span class="c1">#</span>
-
-            <span class="n">key2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readme</span><span class="p">[</span><span class="s2">&quot;COMPOSITION&quot;</span><span class="p">][</span><span class="n">key1</span><span class="p">][</span><span class="s2">&quot;NAME&quot;</span><span class="p">]</span>
-            <span class="n">mapping_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readme</span><span class="p">[</span><span class="s2">&quot;COMPOSITION&quot;</span><span class="p">][</span><span class="n">key1</span><span class="p">][</span><span class="s2">&quot;MAPPING&quot;</span><span class="p">]</span>
-            <span class="n">mapping_dict</span> <span class="o">=</span> <span class="n">loadMappingFile</span><span class="p">(</span><span class="n">mapping_file</span><span class="p">)</span>
-
-            <span class="c1"># put mapping files into a larger dictionary where molecule name is key and</span>
-            <span class="c1"># the dictionary in the correponding mapping file is the value</span>
-            <span class="n">mapping_dictionary</span><span class="p">[</span><span class="n">key2</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapping_dict</span>  <span class="c1"># try if this works</span>
-
-        <span class="k">return</span> <span class="n">mapping_dictionary</span></div>
-
-
-<div class="viewcode-block" id="FormFactor.getElectrons">
-<a class="viewcode-back" href="../../../auto_gen/Scripts.DatabankLib.form_factor.html#Scripts.DatabankLib.form_factor.FormFactor.getElectrons">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">getElectrons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapping_name</span><span class="p">):</span>
+<div class="viewcode-block" id="FormFactor.get_electrons">
+<a class="viewcode-back" href="../../../auto_gen/Scripts.DatabankLib.form_factor.html#Scripts.DatabankLib.form_factor.FormFactor.get_electrons">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_electrons</span><span class="p">(</span><span class="n">mapping_name</span><span class="p">):</span>
         <span class="c1"># removes numbers and &#39;_M&#39; from the end of string</span>
         <span class="n">name1</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[0-9]*_M$&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">mapping_name</span><span class="p">)</span>
         <span class="c1"># removes M_X12Y23... sequence from the beginning</span>
@@ -265,19 +249,19 @@
         <span class="k">return</span> <span class="n">el</span></div>
 
 
-<div class="viewcode-block" id="FormFactor.residueElectronsAll">
-<a class="viewcode-back" href="../../../auto_gen/Scripts.DatabankLib.form_factor.html#Scripts.DatabankLib.form_factor.FormFactor.residueElectronsAll">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">residueElectronsAll</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">molecule</span><span class="p">):</span>
+<div class="viewcode-block" id="FormFactor.residue_electrons_all">
+<a class="viewcode-back" href="../../../auto_gen/Scripts.DatabankLib.form_factor.html#Scripts.DatabankLib.form_factor.FormFactor.residue_electrons_all">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">residue_electrons_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">molecule</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return list of electrons</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Gathering electron list for </span><span class="si">{</span><span class="n">molecule</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">electrons</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="c1"># get the name of molecule used in simulation files</span>
-        <span class="n">molname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readme</span><span class="p">[</span><span class="s1">&#39;COMPOSITION&#39;</span><span class="p">][</span><span class="n">molecule</span><span class="p">][</span><span class="s1">&#39;NAME&#39;</span><span class="p">]</span>
+        <span class="n">molname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">[</span><span class="s1">&#39;COMPOSITION&#39;</span><span class="p">][</span><span class="n">molecule</span><span class="p">][</span><span class="s1">&#39;NAME&#39;</span><span class="p">]</span>
 
-        <span class="n">pairs_residue</span> <span class="o">=</span> <span class="n">FormFactor</span><span class="o">.</span><span class="n">__listNamePairs</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">system_mapping</span><span class="p">[</span><span class="n">molname</span><span class="p">],</span> <span class="n">molname</span><span class="p">)</span>
+        <span class="n">pairs_residue</span> <span class="o">=</span> <span class="n">FormFactor</span><span class="o">.</span><span class="n">__list_name_pairs</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="n">molecule</span><span class="p">]</span><span class="o">.</span><span class="n">mapping_dict</span><span class="p">,</span> <span class="n">molname</span><span class="p">)</span>
 
         <span class="c1"># if lipid is split to multiple residues</span>
         <span class="n">selection_txt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -285,7 +269,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">selection_txt</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="s2">&quot;moltype &quot;</span> <span class="o">+</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">readme</span><span class="p">[</span><span class="s1">&#39;COMPOSITION&#39;</span><span class="p">][</span><span class="n">molecule</span><span class="p">][</span><span class="s1">&#39;MOLTYPE&#39;</span><span class="p">]</span> <span class="o">+</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">[</span><span class="s1">&#39;COMPOSITION&#39;</span><span class="p">][</span><span class="n">molecule</span><span class="p">][</span><span class="s1">&#39;MOLTYPE&#39;</span><span class="p">]</span> <span class="o">+</span>
                 <span class="s2">&quot; and &quot;</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">pass</span>
@@ -316,39 +300,40 @@
 
                 <span class="n">mapping_name</span> <span class="o">=</span> <span class="n">pairs_residue</span><span class="p">[</span><span class="n">res</span><span class="p">][</span><span class="n">atom_i1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
                 <span class="c1"># get number of electrons in an atom i of residue</span>
-                <span class="n">e_atom_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getElectrons</span><span class="p">(</span><span class="n">mapping_name</span><span class="p">)</span>
+                <span class="n">e_atom_i</span> <span class="o">=</span> <span class="n">FormFactor</span><span class="o">.</span><span class="n">get_electrons</span><span class="p">(</span><span class="n">mapping_name</span><span class="p">)</span>
                 <span class="n">electrons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e_atom_i</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">electrons</span></div>
 
 
-<div class="viewcode-block" id="FormFactor.assignElectrons">
-<a class="viewcode-back" href="../../../auto_gen/Scripts.DatabankLib.form_factor.html#Scripts.DatabankLib.form_factor.FormFactor.assignElectrons">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">assignElectrons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FormFactor.assign_electrons">
+<a class="viewcode-back" href="../../../auto_gen/Scripts.DatabankLib.form_factor.html#Scripts.DatabankLib.form_factor.FormFactor.assign_electrons">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">assign_electrons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># check if simulation is united atom or all atom</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">UA</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readme</span><span class="p">[</span><span class="s1">&#39;UNITEDATOM_DICT&#39;</span><span class="p">]</span>
+            <span class="n">ua_flag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">[</span><span class="s1">&#39;UNITEDATOM_DICT&#39;</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="n">UA</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">ua_flag</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">UA</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">ua_flag</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="n">weights</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">l_weights</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># separate list for lipid electrons</span>
         <span class="n">w_weights</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># separate list for water electrons</span>
 
-        <span class="k">if</span> <span class="n">UA</span><span class="p">:</span>  <span class="c1"># UNITED ATOM SIMULATIONS</span>
-            <span class="k">for</span> <span class="n">molecule1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">readme</span><span class="p">[</span><span class="s1">&#39;COMPOSITION&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">ua_flag</span><span class="p">:</span>  <span class="c1"># UNITED ATOM SIMULATIONS</span>
+            <span class="k">for</span> <span class="n">molecule1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">[</span><span class="s1">&#39;COMPOSITION&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">molecule1</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">molecule1</span> <span class="ow">in</span> <span class="n">lipids_dict</span><span class="p">:</span>
-                    <span class="n">molecule2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readme</span><span class="p">[</span><span class="s1">&#39;COMPOSITION&#39;</span><span class="p">][</span><span class="n">molecule1</span><span class="p">][</span><span class="s1">&#39;NAME&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">molecule1</span> <span class="ow">in</span> <span class="n">lipids_set</span><span class="p">:</span>
+                    <span class="n">molecule2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">[</span><span class="s1">&#39;COMPOSITION&#39;</span><span class="p">][</span><span class="n">molecule1</span><span class="p">][</span><span class="s1">&#39;NAME&#39;</span><span class="p">]</span>
                     <span class="n">electrons</span> <span class="o">=</span> <span class="p">[]</span>
 
-                    <span class="n">pairs_residue</span> <span class="o">=</span> <span class="n">FormFactor</span><span class="o">.</span><span class="n">__listNamePairs</span><span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">system_mapping</span><span class="p">[</span><span class="n">molecule2</span><span class="p">],</span> <span class="n">molecule2</span><span class="p">)</span>
-                    <span class="n">atomsH</span> <span class="o">=</span> <span class="n">FormFactor</span><span class="o">.</span><span class="n">__filterHbonds</span><span class="p">(</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">system_mapping</span><span class="p">[</span><span class="n">molecule2</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>  <span class="c1"># list of hydrogen atoms</span>
+                    <span class="n">pairs_residue</span> <span class="o">=</span> <span class="n">FormFactor</span><span class="o">.</span><span class="n">__list_name_pairs</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="n">molecule2</span><span class="p">]</span><span class="o">.</span><span class="n">mapping_dict</span><span class="p">,</span> <span class="n">molecule2</span><span class="p">)</span>
+                    <span class="n">h_atoms</span> <span class="o">=</span> <span class="n">FormFactor</span><span class="o">.</span><span class="n">__filter_hbonds</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="n">molecule2</span><span class="p">]</span><span class="o">.</span><span class="n">mapping_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                    <span class="c1"># list of hydrogen atoms</span>
 
                     <span class="c1"># extract explicit atoms and get the mapping names</span>
                     <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">pairs_residue</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -366,27 +351,27 @@
 
                             <span class="c1"># count how many times name1 occurs in atomsH i.e. how</span>
                             <span class="c1"># many H are bound to it</span>
-                            <span class="n">numberH</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
-                                <span class="mi">1</span> <span class="k">for</span> <span class="n">atomH</span> <span class="ow">in</span> <span class="n">atomsH</span>
-                                <span class="k">if</span> <span class="n">name1</span> <span class="o">==</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;H[1-4]_M&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">atomH</span><span class="p">[::</span><span class="mi">1</span><span class="p">])</span>
+                            <span class="n">h_num</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+                                <span class="mi">1</span> <span class="k">for</span> <span class="n">h_atm</span> <span class="ow">in</span> <span class="n">h_atoms</span>
+                                <span class="k">if</span> <span class="n">name1</span> <span class="o">==</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;H[1-4]_M&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">h_atm</span><span class="p">[::</span><span class="mi">1</span><span class="p">])</span>
                                 <span class="p">)</span>
-                            <span class="n">number_e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getElectrons</span><span class="p">(</span><span class="n">mapping_name</span><span class="p">)</span>
-                            <span class="n">e_atom_i</span> <span class="o">=</span> <span class="n">number_e</span> <span class="o">+</span> <span class="n">numberH</span>
+                            <span class="n">number_e</span> <span class="o">=</span> <span class="n">FormFactor</span><span class="o">.</span><span class="n">get_electrons</span><span class="p">(</span><span class="n">mapping_name</span><span class="p">)</span>
+                            <span class="n">e_atom_i</span> <span class="o">=</span> <span class="n">number_e</span> <span class="o">+</span> <span class="n">h_num</span>
                             <span class="n">electrons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e_atom_i</span><span class="p">)</span>
 
                     <span class="n">weights</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">electrons</span><span class="p">)</span>
                     <span class="n">l_weights</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">electrons</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">residueElectronsAll</span><span class="p">(</span><span class="n">molecule1</span><span class="p">)</span>
+                    <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">residue_electrons_all</span><span class="p">(</span><span class="n">molecule1</span><span class="p">)</span>
                     <span class="n">weights</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">molecule1</span> <span class="o">==</span> <span class="s1">&#39;SOL&#39;</span><span class="p">:</span>
                         <span class="n">w_weights</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># ALL ATOM SIMULATIONS</span>
-            <span class="k">for</span> <span class="n">molecule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">readme</span><span class="p">[</span><span class="s1">&#39;COMPOSITION&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">residueElectronsAll</span><span class="p">(</span><span class="n">molecule</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">molecule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">[</span><span class="s1">&#39;COMPOSITION&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">residue_electrons_all</span><span class="p">(</span><span class="n">molecule</span><span class="p">)</span>
                 <span class="n">weights</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">molecule</span> <span class="ow">in</span> <span class="n">lipids_dict</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">molecule</span> <span class="ow">in</span> <span class="n">lipids_set</span><span class="p">:</span>
                     <span class="n">l_weights</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="n">molecule</span> <span class="o">==</span> <span class="s1">&#39;SOL&#39;</span><span class="p">:</span>
                     <span class="n">w_weights</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
@@ -417,7 +402,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">density_type</span> <span class="o">==</span> <span class="s2">&quot;electron&quot;</span><span class="p">:</span>
             <span class="c1"># calc weights to calculate the electron density</span>
             <span class="c1"># with the function that maps the electrons to atoms</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">wght</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lipid_wght</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">water_wght</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assignElectrons</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wght</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lipid_wght</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">water_wght</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assign_electrons</span><span class="p">()</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;lenght of wght: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wght</span><span class="p">)))</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;lenght of lipid_wght: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lipid_wght</span><span class="p">)))</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;atoms in system: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">names</span><span class="p">)))</span>
@@ -455,9 +440,9 @@
         <span class="n">box_z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">dimensions</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># + 10 if fails</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">box_z</span><span class="p">)</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">box_z</span><span class="o">/</span><span class="mi">10</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbin</span>  <span class="c1"># bin width</span>
-        <span class="n">boxH</span> <span class="o">=</span> <span class="n">box_z</span><span class="o">/</span><span class="mi">10</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">boxH</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">boxH</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">boxH</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbin</span><span class="o">+</span><span class="mi">1</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">d</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">box_h</span> <span class="o">=</span> <span class="n">box_z</span><span class="o">/</span><span class="mi">10</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">box_h</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">box_h</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">box_h</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbin</span><span class="o">+</span><span class="mi">1</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">d</span><span class="o">/</span><span class="mi">2</span>
         <span class="n">density_z_centered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nbin</span><span class="p">)</span>
         <span class="n">density_z_no_center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nbin</span><span class="p">)</span>
         <span class="n">density_lipids_center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nbin</span><span class="p">)</span>
@@ -468,75 +453,75 @@
         <span class="n">min_z</span> <span class="o">=</span> <span class="mi">10000000</span>
         <span class="n">frame</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="n">ElectronNumbers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">elnum_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">UA</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readme</span><span class="p">[</span><span class="s1">&#39;UNITEDATOM_DICT&#39;</span><span class="p">]</span>
+            <span class="n">ua_flag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">[</span><span class="s1">&#39;UNITEDATOM_DICT&#39;</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="n">UA</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">ua_flag</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">readme</span><span class="p">[</span><span class="s1">&#39;UNITEDATOM_DICT&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">UA</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">[</span><span class="s1">&#39;UNITEDATOM_DICT&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ua_flag</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">UA</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">ua_flag</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="k">for</span> <span class="n">key1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">readme</span><span class="p">[</span><span class="s1">&#39;COMPOSITION&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">mol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">readme</span><span class="p">[</span><span class="s1">&#39;COMPOSITION&#39;</span><span class="p">][</span><span class="n">key1</span><span class="p">][</span><span class="s1">&#39;NAME&#39;</span><span class="p">]</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">mol</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">universalAN</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">system_mapping</span><span class="p">[</span><span class="n">mol</span><span class="p">]:</span>
-                <span class="n">AtomName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system_mapping</span><span class="p">[</span><span class="n">mol</span><span class="p">][</span><span class="n">universalAN</span><span class="p">][</span><span class="s1">&#39;ATOMNAME&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">key1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">[</span><span class="s1">&#39;COMPOSITION&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">pdbname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">[</span><span class="s1">&#39;COMPOSITION&#39;</span><span class="p">][</span><span class="n">key1</span><span class="p">][</span><span class="s1">&#39;NAME&#39;</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">pdbname</span><span class="p">)</span>
+            <span class="n">mdict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">content</span><span class="p">[</span><span class="n">key1</span><span class="p">]</span><span class="o">.</span><span class="n">mapping_dict</span>
+            <span class="k">for</span> <span class="n">univ_aname</span> <span class="ow">in</span> <span class="n">mdict</span><span class="p">:</span>
+                <span class="n">aname</span> <span class="o">=</span> <span class="n">mdict</span><span class="p">[</span><span class="n">univ_aname</span><span class="p">][</span><span class="s1">&#39;ATOMNAME&#39;</span><span class="p">]</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">ResName</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system_mapping</span><span class="p">[</span><span class="n">mol</span><span class="p">][</span><span class="n">universalAN</span><span class="p">][</span><span class="s1">&#39;RESIDUE&#39;</span><span class="p">]</span>
+                    <span class="n">resname</span> <span class="o">=</span> <span class="n">mdict</span><span class="p">[</span><span class="n">univ_aname</span><span class="p">][</span><span class="s1">&#39;RESIDUE&#39;</span><span class="p">]</span>
                 <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
-                    <span class="n">ResName</span> <span class="o">=</span> <span class="n">mol</span>
+                    <span class="n">resname</span> <span class="o">=</span> <span class="n">pdbname</span>
 
-                <span class="k">if</span> <span class="n">ResName</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ElectronNumbers</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                    <span class="n">ElectronNumbers</span><span class="p">[</span><span class="n">ResName</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">if</span> <span class="n">resname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">elnum_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">elnum_dict</span><span class="p">[</span><span class="n">resname</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
-                <span class="k">if</span> <span class="n">UA</span> <span class="ow">and</span> <span class="n">key1</span> <span class="ow">in</span> <span class="n">lipids_dict</span><span class="p">:</span>
-                    <span class="n">UAlipidjsonNAME</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                        <span class="n">NMLDB_ROOT_PATH</span><span class="p">,</span> <span class="s1">&#39;Scripts&#39;</span><span class="p">,</span> <span class="s1">&#39;DatabankLib&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;lipid_json_buildH&#39;</span><span class="p">,</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">readme</span><span class="p">[</span><span class="s1">&#39;UNITEDATOM_DICT&#39;</span><span class="p">][</span><span class="n">key1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.json&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ua_flag</span> <span class="ow">and</span> <span class="n">key1</span> <span class="ow">in</span> <span class="n">lipids_set</span><span class="p">:</span>
+                    <span class="n">ua_lip_json_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                        <span class="n">NMLDB_DATA_PATH</span><span class="p">,</span> <span class="s1">&#39;lipid_json_buildH&#39;</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">system</span><span class="p">[</span><span class="s1">&#39;UNITEDATOM_DICT&#39;</span><span class="p">][</span><span class="n">key1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.json&#39;</span><span class="p">)</span>
 
-                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">UAlipidjsonNAME</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
-                        <span class="n">UAlipidjson</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">ua_lip_json_name</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+                        <span class="n">ua_lip_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
 
-                    <span class="n">numberH</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">h_num</span> <span class="o">=</span> <span class="mi">0</span>
                     <span class="k">try</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">UAlipidjson</span><span class="p">[</span><span class="n">AtomName</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;CH&quot;</span><span class="p">:</span>
-                            <span class="n">numberH</span> <span class="o">=</span> <span class="mi">1</span>
-                        <span class="k">if</span> <span class="n">UAlipidjson</span><span class="p">[</span><span class="n">AtomName</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;CH2&quot;</span><span class="p">:</span>
-                            <span class="n">numberH</span> <span class="o">=</span> <span class="mi">2</span>
-                        <span class="k">if</span> <span class="n">UAlipidjson</span><span class="p">[</span><span class="n">AtomName</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;CH3&quot;</span><span class="p">:</span>
-                            <span class="n">numberH</span> <span class="o">=</span> <span class="mi">3</span>
+                        <span class="k">if</span> <span class="n">ua_lip_json</span><span class="p">[</span><span class="n">aname</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;CH&quot;</span><span class="p">:</span>
+                            <span class="n">h_num</span> <span class="o">=</span> <span class="mi">1</span>
+                        <span class="k">if</span> <span class="n">ua_lip_json</span><span class="p">[</span><span class="n">aname</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;CH2&quot;</span><span class="p">:</span>
+                            <span class="n">h_num</span> <span class="o">=</span> <span class="mi">2</span>
+                        <span class="k">if</span> <span class="n">ua_lip_json</span><span class="p">[</span><span class="n">aname</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;CH3&quot;</span><span class="p">:</span>
+                            <span class="n">h_num</span> <span class="o">=</span> <span class="mi">3</span>
                     <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
                         <span class="k">pass</span>
 
-                    <span class="n">ElectronNumbers</span><span class="p">[</span><span class="n">ResName</span><span class="p">][</span><span class="n">AtomName</span><span class="p">]</span> <span class="o">=</span> \
-                        <span class="bp">self</span><span class="o">.</span><span class="n">getElectrons</span><span class="p">(</span><span class="n">universalAN</span><span class="p">)</span> <span class="o">+</span> <span class="n">numberH</span>
+                    <span class="n">elnum_dict</span><span class="p">[</span><span class="n">resname</span><span class="p">][</span><span class="n">aname</span><span class="p">]</span> <span class="o">=</span> \
+                        <span class="n">FormFactor</span><span class="o">.</span><span class="n">get_electrons</span><span class="p">(</span><span class="n">univ_aname</span><span class="p">)</span> <span class="o">+</span> <span class="n">h_num</span>
 
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">ElectronNumbers</span><span class="p">[</span><span class="n">ResName</span><span class="p">][</span><span class="n">AtomName</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getElectrons</span><span class="p">(</span><span class="n">universalAN</span><span class="p">)</span>
+                    <span class="n">elnum_dict</span><span class="p">[</span><span class="n">resname</span><span class="p">][</span><span class="n">aname</span><span class="p">]</span> <span class="o">=</span> <span class="n">FormFactor</span><span class="o">.</span><span class="n">get_electrons</span><span class="p">(</span><span class="n">univ_aname</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ElectronNumbers dictionary: &quot;</span><span class="p">)</span>
-        <span class="n">pprint</span><span class="p">(</span><span class="n">ElectronNumbers</span><span class="p">)</span>
+        <span class="n">pprint</span><span class="p">(</span><span class="n">elnum_dict</span><span class="p">)</span>
 
         <span class="c1"># define selections and dictionaries for profile calculations</span>
         <span class="n">clipids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lipids</span><span class="p">)</span>
         <span class="n">cwaters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">waters</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generating final electron arrays from frame #1..&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-        <span class="n">weightsALL</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">n_atoms</span><span class="p">)</span>
+        <span class="n">weights_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">n_atoms</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">rname</span><span class="p">,</span> <span class="n">AName2Enum</span> <span class="ow">in</span> <span class="n">ElectronNumbers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">for</span> <span class="n">aname</span><span class="p">,</span> <span class="n">enum</span> <span class="ow">in</span> <span class="n">AName2Enum</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">rname</span><span class="p">,</span> <span class="n">aname2enum</span> <span class="ow">in</span> <span class="n">elnum_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">aname</span><span class="p">,</span> <span class="n">enum</span> <span class="ow">in</span> <span class="n">aname2enum</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="c1"># all</span>
-                <span class="n">cSel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;resname </span><span class="si">{</span><span class="n">rname</span><span class="si">}</span><span class="s2"> and name </span><span class="si">{</span><span class="n">aname</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">weightsALL</span><span class="p">[[</span><span class="n">_a</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">_a</span> <span class="ow">in</span> <span class="n">cSel</span><span class="p">]]</span> <span class="o">=</span> <span class="n">enum</span>
+                <span class="n">csel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">select_atoms</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;resname </span><span class="si">{</span><span class="n">rname</span><span class="si">}</span><span class="s2"> and name </span><span class="si">{</span><span class="n">aname</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">weights_all</span><span class="p">[[</span><span class="n">_a</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">_a</span> <span class="ow">in</span> <span class="n">csel</span><span class="p">]]</span> <span class="o">=</span> <span class="n">enum</span>
 
-        <span class="n">weightsLIPIDS</span> <span class="o">=</span> <span class="n">weightsALL</span><span class="p">[[</span><span class="n">_a</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">_a</span> <span class="ow">in</span> <span class="n">clipids</span><span class="p">]]</span>
-        <span class="n">weightsWATERS</span> <span class="o">=</span> <span class="n">weightsALL</span><span class="p">[[</span><span class="n">_a</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">_a</span> <span class="ow">in</span> <span class="n">cwaters</span><span class="p">]]</span>
+        <span class="n">weights_lipids</span> <span class="o">=</span> <span class="n">weights_all</span><span class="p">[[</span><span class="n">_a</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">_a</span> <span class="ow">in</span> <span class="n">clipids</span><span class="p">]]</span>
+        <span class="n">weights_waters</span> <span class="o">=</span> <span class="n">weights_all</span><span class="p">[[</span><span class="n">_a</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">_a</span> <span class="ow">in</span> <span class="n">cwaters</span><span class="p">]]</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;done.&quot;</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">ts</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="o">.</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Iterating over trajectory&quot;</span><span class="p">):</span>
@@ -586,22 +571,22 @@
 
             <span class="c1"># calculates the total density profile; keep for now</span>
             <span class="n">density_z_centered</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
-                <span class="n">crds</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nbin</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">boxH</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">boxH</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span>
-                <span class="n">weights</span><span class="o">=</span><span class="n">weightsALL</span> <span class="o">/</span> <span class="n">vbin</span><span class="p">,</span>
+                <span class="n">crds</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nbin</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">box_h</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">box_h</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span>
+                <span class="n">weights</span><span class="o">=</span><span class="n">weights_all</span> <span class="o">/</span> <span class="n">vbin</span><span class="p">,</span>
             <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">density_z_no_center</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
-                <span class="n">crds_no_center</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nbin</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">boxH</span><span class="p">),</span>
-                <span class="n">weights</span><span class="o">=</span><span class="n">weightsLIPIDS</span> <span class="o">/</span> <span class="n">vbin</span><span class="p">,</span>
+                <span class="n">crds_no_center</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nbin</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">box_h</span><span class="p">),</span>
+                <span class="n">weights</span><span class="o">=</span><span class="n">weights_lipids</span> <span class="o">/</span> <span class="n">vbin</span><span class="p">,</span>
             <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="c1"># ELECTRON WEIGHTS</span>
             <span class="n">density_lipids_center</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
-                <span class="n">clipids_center</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nbin</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">boxH</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">boxH</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span>
-                <span class="n">weights</span><span class="o">=</span><span class="n">weightsLIPIDS</span> <span class="o">/</span> <span class="n">vbin</span><span class="p">,</span>
+                <span class="n">clipids_center</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nbin</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">box_h</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">box_h</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span>
+                <span class="n">weights</span><span class="o">=</span><span class="n">weights_lipids</span> <span class="o">/</span> <span class="n">vbin</span><span class="p">,</span>
             <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="c1"># ELECTRON WEIGHTS</span>
             <span class="n">density_waters_center</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span>
-                <span class="n">cwaters_center</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nbin</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">boxH</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">boxH</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span>
-                <span class="n">weights</span><span class="o">=</span><span class="n">weightsWATERS</span> <span class="o">/</span> <span class="n">vbin</span><span class="p">,</span>
+                <span class="n">cwaters_center</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nbin</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">box_h</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">box_h</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span>
+                <span class="n">weights</span><span class="o">=</span><span class="n">weights_waters</span> <span class="o">/</span> <span class="n">vbin</span><span class="p">,</span>
             <span class="p">)[</span>
                 <span class="mi">0</span>
             <span class="p">]</span>
@@ -622,38 +607,38 @@
 
         <span class="c1"># Get the indexes of the final density data where all the time steps contribute</span>
         <span class="c1"># In other words, take the coordinates of the smalest box from the simulation</span>
-        <span class="n">final_FF_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nbin</span><span class="o">/</span><span class="mi">2</span> <span class="o">-</span> <span class="n">min_z</span><span class="o">/</span><span class="n">d</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="n">final_FF_end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nbin</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="n">min_z</span><span class="o">/</span><span class="n">d</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">final_ff_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nbin</span><span class="o">/</span><span class="mi">2</span> <span class="o">-</span> <span class="n">min_z</span><span class="o">/</span><span class="n">d</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">final_ff_end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nbin</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="n">min_z</span><span class="o">/</span><span class="n">d</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span>
 
-        <span class="n">FF_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">999</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+        <span class="n">ff_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">999</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
         <span class="n">fa_aver</span><span class="p">,</span> <span class="n">fb_aver</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fourier</span><span class="p">(</span>
-            <span class="n">density_data</span><span class="p">[</span><span class="n">final_FF_start</span><span class="p">:</span><span class="n">final_FF_end</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-            <span class="n">density_data</span><span class="p">[</span><span class="n">final_FF_end</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">density_data</span><span class="p">[</span><span class="n">final_FF_start</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-            <span class="n">FF_range</span><span class="p">,</span>
+            <span class="n">density_data</span><span class="p">[</span><span class="n">final_ff_start</span><span class="p">:</span><span class="n">final_ff_end</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="n">density_data</span><span class="p">[</span><span class="n">final_ff_end</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">density_data</span><span class="p">[</span><span class="n">final_ff_start</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="n">ff_range</span><span class="p">,</span>
             <span class="n">density_data</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">density_data</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
         <span class="p">)</span>
 
         <span class="c1"># Plot density profiles from the average density with minimal box</span>
         <span class="n">fourrier_result2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">fa_aver</span><span class="p">,</span> <span class="n">fa_aver</span><span class="p">)</span> <span class="o">+</span>
                                    <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">fb_aver</span><span class="p">,</span> <span class="n">fb_aver</span><span class="p">))</span>
-        <span class="n">fourrier_data2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">FF_range</span><span class="o">*</span><span class="mf">0.1</span><span class="o">*</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">fourrier_result2</span><span class="p">))</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+        <span class="n">fourrier_data2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">ff_range</span><span class="o">*</span><span class="mf">0.1</span><span class="o">*</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">fourrier_result2</span><span class="p">))</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
 
         <span class="c1"># Save data into files</span>
         <span class="c1"># minimum box size density</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;TotalDensity.dat&quot;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">density_data</span><span class="p">[</span><span class="n">final_FF_start</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">final_FF_end</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">density_data</span><span class="p">[</span><span class="n">final_ff_start</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">final_ff_end</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span>
                        <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%8.4f</span><span class="s1">  </span><span class="si">%.8f</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;LipidDensity_no_center.dat&quot;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">density_data_no_center</span><span class="p">[</span><span class="n">final_FF_start</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">final_FF_end</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">density_data_no_center</span><span class="p">[</span><span class="n">final_ff_start</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">final_ff_end</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span>
                        <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%8.4f</span><span class="s1">  </span><span class="si">%.8f</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;LipidDensity.dat&quot;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">density_lipids_center</span><span class="p">[</span><span class="n">final_FF_start</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">final_FF_end</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">density_lipids_center</span><span class="p">[</span><span class="n">final_ff_start</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">final_ff_end</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span>
                        <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%8.4f</span><span class="s1">  </span><span class="si">%.8f</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;WaterDensity.dat&quot;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">density_waters_center</span><span class="p">[</span><span class="n">final_FF_start</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">final_FF_end</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">density_waters_center</span><span class="p">[</span><span class="n">final_ff_start</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">final_ff_end</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span>
                        <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%8.4f</span><span class="s1">  </span><span class="si">%.8f</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="c1"># this is the important file form factors</span>
@@ -663,15 +648,15 @@
         <span class="c1"># write outputs in JSON</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;TotalDensity.json&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">density_data</span><span class="p">[</span><span class="n">final_FF_start</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">final_FF_end</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">density_data</span><span class="p">[</span><span class="n">final_ff_start</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">final_ff_end</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span>
                       <span class="n">f</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">NumpyArrayEncoder</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;LipidDensity.json&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">density_lipids_center</span><span class="p">[</span><span class="n">final_FF_start</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">final_FF_end</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">density_lipids_center</span><span class="p">[</span><span class="n">final_ff_start</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">final_ff_end</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span>
                       <span class="n">f</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">NumpyArrayEncoder</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;WaterDensity.json&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">density_waters_center</span><span class="p">[</span><span class="n">final_FF_start</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">final_FF_end</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">density_waters_center</span><span class="p">[</span><span class="n">final_ff_start</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">final_ff_end</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span>
                       <span class="n">f</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">NumpyArrayEncoder</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;FormFactor.json&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -681,7 +666,7 @@
 
 <div class="viewcode-block" id="FormFactor.fourier">
 <a class="viewcode-back" href="../../../auto_gen/Scripts.DatabankLib.form_factor.html#Scripts.DatabankLib.form_factor.FormFactor.fourier">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">fourier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ff_density</span><span class="p">,</span> <span class="n">box_z</span><span class="p">,</span> <span class="n">FF_range</span><span class="p">,</span> <span class="n">d_ff</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fourier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ff_density</span><span class="p">,</span> <span class="n">box_z</span><span class="p">,</span> <span class="n">ff_range</span><span class="p">,</span> <span class="n">d_ff</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculates fourier transform of ff_density in the FF_range.</span>
 <span class="sd">        It calculates a &quot;height&quot; of a bin for FF puroposes; in this case the number of</span>
 <span class="sd">        bins is constant and the bin width changes.</span>
@@ -689,7 +674,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            ff_density (_type_): TODO: fill</span>
 <span class="sd">            box_z (_type_): TODO: fill</span>
-<span class="sd">            FF_range (_type_): TODO: fill</span>
+<span class="sd">            ff_range (_type_): TODO: fill</span>
 <span class="sd">            d_ff (_type_): TODO: fill</span>
 
 <span class="sd">        Returns:</span>
@@ -709,12 +694,12 @@
             <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">bulk</span> <span class="o">/=</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">k</span><span class="p">)</span>
 
-        <span class="n">fa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">FF_range</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">fb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">FF_range</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">fa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ff_range</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">fb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ff_range</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ff_density</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-            <span class="n">fa</span> <span class="o">+=</span> <span class="p">(</span><span class="n">ff_density</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">bulk</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">FF_range</span><span class="o">*</span><span class="n">ff_x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="mf">0.01</span><span class="p">)</span><span class="o">*</span><span class="n">d_ff</span>
-            <span class="n">fb</span> <span class="o">+=</span> <span class="p">(</span><span class="n">ff_density</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">bulk</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">FF_range</span><span class="o">*</span><span class="n">ff_x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="mf">0.01</span><span class="p">)</span><span class="o">*</span><span class="n">d_ff</span>
+            <span class="n">fa</span> <span class="o">+=</span> <span class="p">(</span><span class="n">ff_density</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">bulk</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">ff_range</span><span class="o">*</span><span class="n">ff_x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="mf">0.01</span><span class="p">)</span><span class="o">*</span><span class="n">d_ff</span>
+            <span class="n">fb</span> <span class="o">+=</span> <span class="p">(</span><span class="n">ff_density</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">bulk</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">ff_range</span><span class="o">*</span><span class="n">ff_x</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="mf">0.01</span><span class="p">)</span><span class="o">*</span><span class="n">d_ff</span>
 
         <span class="k">return</span> <span class="n">fa</span><span class="p">,</span> <span class="n">fb</span></div>
 </div>

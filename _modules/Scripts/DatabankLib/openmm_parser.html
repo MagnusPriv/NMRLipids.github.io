@@ -79,7 +79,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for Scripts.DatabankLib.openmm_parser</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">xml.etree</span><span class="w"> </span><span class="kn">import</span> <span class="n">ElementTree</span> <span class="k">as</span> <span class="n">ET</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">xml.etree</span><span class="w"> </span><span class="kn">import</span> <span class="n">ElementTree</span> <span class="k">as</span> <span class="n">etree</span>
 
 
 <div class="viewcode-block" id="openmm_input">
@@ -139,7 +139,7 @@
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;File does not exist&quot;</span><span class="p">)</span>
 
-    <span class="n">tree</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
     <span class="n">temp</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">value</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">tree</span><span class="o">.</span><span class="n">getroot</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
@@ -150,9 +150,9 @@
 
 
 
-<div class="viewcode-block" id="openmmParser">
-<a class="viewcode-back" href="../../../auto_gen/Scripts.DatabankLib.openmm_parser.html#Scripts.DatabankLib.openmm_parser.openmmParser">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">openmmParser</span><span class="p">:</span>
+<div class="viewcode-block" id="OpenMMParser">
+<a class="viewcode-back" href="../../../auto_gen/Scripts.DatabankLib.openmm_parser.html#Scripts.DatabankLib.openmm_parser.OpenMMParser">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OpenMMParser</span><span class="p">:</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
         <span class="p">[</span><span class="n">properties</span><span class="p">,</span> <span class="n">values</span><span class="p">]</span> <span class="o">=</span> <span class="n">openmm_input</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
@@ -163,30 +163,30 @@
     <span class="c1">#       self.ptype = values[properties.index(&#39;p_type&#39;)]</span>
     <span class="c1">#       self.dt = values[properties.index(&#39;dt&#39;)]</span>
 
-<div class="viewcode-block" id="openmmParser.setTempurature">
-<a class="viewcode-back" href="../../../auto_gen/Scripts.DatabankLib.openmm_parser.html#Scripts.DatabankLib.openmm_parser.openmmParser.setTempurature">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">setTempurature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temp</span><span class="p">):</span>
+<div class="viewcode-block" id="OpenMMParser.set_tempurature">
+<a class="viewcode-back" href="../../../auto_gen/Scripts.DatabankLib.openmm_parser.html#Scripts.DatabankLib.openmm_parser.OpenMMParser.set_tempurature">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_tempurature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temp</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temp</span></div>
 
 
-<div class="viewcode-block" id="openmmParser.setPressure">
-<a class="viewcode-back" href="../../../auto_gen/Scripts.DatabankLib.openmm_parser.html#Scripts.DatabankLib.openmm_parser.openmmParser.setPressure">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">setPressure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pressure</span><span class="p">):</span>
+<div class="viewcode-block" id="OpenMMParser.set_pressure">
+<a class="viewcode-back" href="../../../auto_gen/Scripts.DatabankLib.openmm_parser.html#Scripts.DatabankLib.openmm_parser.OpenMMParser.set_pressure">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_pressure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pressure</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">pressure</span> <span class="o">=</span> <span class="n">pressure</span></div>
 
 
-<div class="viewcode-block" id="openmmParser.setPType">
-<a class="viewcode-back" href="../../../auto_gen/Scripts.DatabankLib.openmm_parser.html#Scripts.DatabankLib.openmm_parser.openmmParser.setPType">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">setPType</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptype</span><span class="p">):</span>
+<div class="viewcode-block" id="OpenMMParser.set_ptype">
+<a class="viewcode-back" href="../../../auto_gen/Scripts.DatabankLib.openmm_parser.html#Scripts.DatabankLib.openmm_parser.OpenMMParser.set_ptype">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_ptype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptype</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">ptype</span> <span class="o">=</span> <span class="n">ptype</span></div>
 
 
-<div class="viewcode-block" id="openmmParser.setDt">
-<a class="viewcode-back" href="../../../auto_gen/Scripts.DatabankLib.openmm_parser.html#Scripts.DatabankLib.openmm_parser.openmmParser.setDt">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">setDt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+<div class="viewcode-block" id="OpenMMParser.set_dt">
+<a class="viewcode-back" href="../../../auto_gen/Scripts.DatabankLib.openmm_parser.html#Scripts.DatabankLib.openmm_parser.OpenMMParser.set_dt">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_dt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="n">dt</span></div>
 </div>

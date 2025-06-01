@@ -86,22 +86,21 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">DatabankLib</span><span class="w"> </span><span class="kn">import</span> <span class="n">NMLDB_SIMU_PATH</span><span class="p">,</span> <span class="n">NMLDB_EXP_PATH</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">DatabankLib.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">initialize_databank</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">plotFormFactor</span><span class="p">(</span><span class="n">expFormFactor</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">legend</span><span class="p">,</span> <span class="n">PlotColor</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotFormFactor</span><span class="p">(</span>  <span class="c1"># noqa: N802</span>
+        <span class="n">exp_form_factor</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">legend</span><span class="p">,</span> <span class="n">plot_color</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;:meta private:&quot;&quot;&quot;</span>
-    <span class="n">xValues</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">yValues</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">expFormFactor</span><span class="p">:</span>
-        <span class="n">xValues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">yValues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xValues</span><span class="p">,</span> <span class="n">yValues</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">legend</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">PlotColor</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">4.0</span><span class="p">)</span>
+    <span class="n">x_vals</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">y_vals</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">exp_form_factor</span><span class="p">:</span>
+        <span class="n">x_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">y_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">i</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_vals</span><span class="p">,</span> <span class="n">y_vals</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">legend</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">plot_color</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">4.0</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$q_</span><span class="si">{z}</span><span class="s2"> [Å^{-1}]$&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$|F(q_</span><span class="si">{z}</span><span class="s2">)|$&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
@@ -112,24 +111,24 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;FormFactor.pdf&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">plotOrderParameters</span><span class="p">(</span><span class="n">OPsim</span><span class="p">,</span> <span class="n">OPexp</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotOrderParameters</span><span class="p">(</span><span class="n">OPsim</span><span class="p">,</span> <span class="n">OPexp</span><span class="p">):</span>  <span class="c1"># noqa</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;:meta private:&quot;&quot;&quot;</span>
-    <span class="n">xValuesHG</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">xValuesSN1</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">xValuesSN2</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">xValuesHG</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># noqa: N806</span>
+    <span class="n">xValuesSN1</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># noqa: N806</span>
+    <span class="n">xValuesSN2</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># noqa: N806</span>
 
-    <span class="n">yValuesHGsim</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">yValuesSN1sim</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">yValuesSN2sim</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">yValuesHGsimERR</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">yValuesSN1simERR</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">yValuesSN2simERR</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">yValuesHGexp</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">yValuesSN1exp</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">yValuesSN2exp</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">xValuesHGexp</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">xValuesSN1exp</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">xValuesSN2exp</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">yValuesHGsim</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># noqa: N806</span>
+    <span class="n">yValuesSN1sim</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># noqa: N806</span>
+    <span class="n">yValuesSN2sim</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># noqa: N806</span>
+    <span class="n">yValuesHGsimERR</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># noqa: N806</span>
+    <span class="n">yValuesSN1simERR</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># noqa: N806</span>
+    <span class="n">yValuesSN2simERR</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># noqa: N806</span>
+    <span class="n">yValuesHGexp</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># noqa: N806</span>
+    <span class="n">yValuesSN1exp</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># noqa: N806</span>
+    <span class="n">yValuesSN2exp</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># noqa: N806</span>
+    <span class="n">xValuesHGexp</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># noqa: N806</span>
+    <span class="n">xValuesSN1exp</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># noqa: N806</span>
+    <span class="n">xValuesSN2exp</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># noqa: N806</span>
 
     <span class="n">sn1carbons</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;M_G1C3_M M_G1C3H1_M&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
@@ -205,7 +204,7 @@
         <span class="s2">&quot;M_G2C19_M M_G2C19H3_M&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span>
     <span class="p">}</span>
 
-    <span class="n">HGcarbons</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">HGcarbons</span> <span class="o">=</span> <span class="p">{</span>  <span class="c1"># noqa: N806</span>
         <span class="s2">&quot;M_G3N6C1_M M_G3N6C1H1_M&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="s2">&quot;M_G3N6C1_M M_G3N6C1H2_M&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="s2">&quot;M_G3N6C1_M M_G3N6C1H3_M&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
@@ -314,7 +313,7 @@
 
 <div class="viewcode-block" id="plotSimulation">
 <a class="viewcode-back" href="../../../auto_gen/Scripts.DatabankLib.plottings.html#Scripts.DatabankLib.plottings.plotSimulation">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">plotSimulation</span><span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="n">lipid</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plotSimulation</span><span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="n">lipid</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>  <span class="c1"># noqa: N802</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates plots of form factor and C-H bond order parameters for the selected</span>
 <span class="sd">    ``lipid`` from a simulation given by system.</span>
@@ -324,49 +323,49 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">NMLDB_SIMU_PATH</span><span class="p">,</span> <span class="n">system</span><span class="p">[</span><span class="s1">&#39;path&#39;</span><span class="p">])</span>
-    <span class="n">FFpathSIM</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;FormFactor.json&#39;</span><span class="p">)</span>
-    <span class="n">OPpathSIM</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">lipid</span> <span class="o">+</span> <span class="s1">&#39;OrderParameters.json&#39;</span><span class="p">)</span>
-    <span class="n">READMEfilepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;README.yaml&#39;</span><span class="p">)</span>
-    <span class="n">FFQualityFilePath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;FormFactorQuality.json&#39;</span><span class="p">)</span>
+    <span class="n">ff_path_sim</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;FormFactor.json&#39;</span><span class="p">)</span>
+    <span class="n">op_path_sim</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">lipid</span> <span class="o">+</span> <span class="s1">&#39;OrderParameters.json&#39;</span><span class="p">)</span>
+    <span class="n">ffqual_fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;FormFactorQuality.json&#39;</span><span class="p">)</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DOI: &#39;</span><span class="p">,</span> <span class="n">system</span><span class="p">[</span><span class="s1">&#39;DOI&#39;</span><span class="p">])</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">FFQualityFilePath</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
-            <span class="n">FFq</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Form factor quality: &#39;</span><span class="p">,</span> <span class="n">FFq</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">ffqual_fpath</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+            <span class="n">ff_quality</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Form factor quality: &#39;</span><span class="p">,</span> <span class="n">ff_quality</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="n">ffdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">NMLDB_EXP_PATH</span><span class="p">,</span> <span class="s1">&#39;FormFactors&#39;</span><span class="p">,</span>
                              <span class="n">system</span><span class="p">[</span><span class="s1">&#39;EXPERIMENT&#39;</span><span class="p">][</span><span class="s1">&#39;FORMFACTOR&#39;</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">subdir</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">ffdir</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;_FormFactor.json&#39;</span><span class="p">):</span>
-                    <span class="n">FFpathEXP</span> <span class="o">=</span> <span class="n">subdir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">filename</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">FFpathEXP</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
-            <span class="n">FFexp</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+                    <span class="n">ff_path_exp</span> <span class="o">=</span> <span class="n">subdir</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">filename</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">ff_path_exp</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+            <span class="n">ff_exp</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Force field quality not found&#39;</span><span class="p">)</span>
 
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">OPpathSIM</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
-        <span class="n">OPsim</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">op_path_sim</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+        <span class="n">op_sim</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
 
-    <span class="n">OPexp</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">expOPfolder</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">system</span><span class="p">[</span><span class="s1">&#39;EXPERIMENT&#39;</span><span class="p">][</span><span class="s1">&#39;ORDERPARAMETER&#39;</span><span class="p">][</span><span class="n">lipid</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
-        <span class="n">OPpathEXP</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">NMLDB_EXP_PATH</span><span class="p">,</span> <span class="s1">&#39;OrderParameters&#39;</span><span class="p">,</span>
-                                 <span class="n">expOPfolder</span><span class="p">,</span> <span class="n">lipid</span> <span class="o">+</span> <span class="s1">&#39;_Order_Parameters.json&#39;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">OPpathEXP</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
-            <span class="n">OPexp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">))</span>
+    <span class="n">op_exp</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">exp_op_folder</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">system</span><span class="p">[</span><span class="s1">&#39;EXPERIMENT&#39;</span><span class="p">][</span><span class="s1">&#39;ORDERPARAMETER&#39;</span><span class="p">][</span><span class="n">lipid</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+        <span class="n">op_path_exp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">NMLDB_EXP_PATH</span><span class="p">,</span> <span class="s1">&#39;OrderParameters&#39;</span><span class="p">,</span> <span class="n">exp_op_folder</span><span class="p">,</span>
+            <span class="n">lipid</span> <span class="o">+</span> <span class="s1">&#39;_Order_Parameters.json&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">op_path_exp</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+            <span class="n">op_exp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">))</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">FFpathSIM</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
-            <span class="n">FFsim</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
-        <span class="n">plotFormFactor</span><span class="p">(</span><span class="n">FFsim</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Simulation&quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
-        <span class="n">plotFormFactor</span><span class="p">(</span><span class="n">FFexp</span><span class="p">,</span> <span class="n">FFq</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;Experiment&quot;</span><span class="p">,</span> <span class="s2">&quot;black&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">ff_path_sim</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+            <span class="n">ff_sim</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_file</span><span class="p">)</span>
+        <span class="n">plotFormFactor</span><span class="p">(</span><span class="n">ff_sim</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Simulation&quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+        <span class="n">plotFormFactor</span><span class="p">(</span><span class="n">ff_exp</span><span class="p">,</span> <span class="n">ff_quality</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;Experiment&quot;</span><span class="p">,</span> <span class="s2">&quot;black&quot;</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Form factor plotting failed&#39;</span><span class="p">)</span>
 
-    <span class="n">plotOrderParameters</span><span class="p">(</span><span class="n">OPsim</span><span class="p">,</span> <span class="n">OPexp</span><span class="p">)</span></div>
+    <span class="n">plotOrderParameters</span><span class="p">(</span><span class="n">op_sim</span><span class="p">,</span> <span class="n">op_exp</span><span class="p">)</span></div>
 
 </pre></div>
 

@@ -39,13 +39,13 @@ Functionality for updating the GUI of the NMRLipids Databank.
 tests
 -----
 
-Pytest-based unit and regression tests on the toy databank.
+Pytest-based unit and regression tests.
 
 :doc:`More info on tests <auto_gen/Scripts.tests>`
 
 
 Repository folder structure 
---------------------------
+---------------------------
 
 .. toctree::
    :maxdepth: 3
