@@ -1,0 +1,7 @@
+Scripts.pull\_request module
+============================
+
+.. automodule:: Scripts.pull_request
+   :members:
+   :show-inheritance:
+   :undoc-members:
