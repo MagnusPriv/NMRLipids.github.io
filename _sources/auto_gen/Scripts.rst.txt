@@ -15,11 +15,3 @@ Subfolders
    Scripts.DatabankLib
    Scripts.tests
    Scripts.updateGUI
-
-Python files
-----------
-
-.. toctree::
-   :maxdepth: 1
-
-   Scripts.pull_request
